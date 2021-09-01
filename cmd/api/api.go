@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -11,13 +10,11 @@ import (
 )
 
 const version = "1.0.0"
-const cssVersion = "1"
 
 // holds configuration information for the app
 type config struct {
 	port int
 	env  string // dev or prod
-	api  string // the url we call to the backend api
 	db   struct {
 		dsn string
 	}
@@ -32,7 +29,6 @@ type application struct {
 	config        config
 	infoLog       *log.Logger
 	errorLog      *log.Logger
-	templateCache map[string]*template.Template
 	version       string
 }
 
@@ -69,6 +65,7 @@ func main() {
 		config: cfg,
 		infoLog: infoLog,
 		errorLog: errorLog,
+		version: version,
 	}
 
 	err := app.serve()
