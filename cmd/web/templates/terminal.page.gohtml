@@ -7,7 +7,7 @@
 {{define "content"}}
 <h2>Virtual Terminal</h2>
 <hr>
-
+<div class="alert alert-danger text-center d-none" id="card-messages"></div>
 <form action="/payment-succeeded" method="POST"
     name="charge_form" id="charge_form"
     class="d-block needs-validation charge-form"
@@ -41,6 +41,11 @@
     <hr>
 
     <a id="pay-button" href="javascript:void(0)" class="btn btn-primary" onclick="val()">Charge Card</a>
+    <div id="processing-payment" class="text-center d-none">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
 </form>
 
@@ -52,10 +57,20 @@
     <script>
     let card;
     let stripe;
+    const cardMessages = document.getElementById("card-messages")
+    const payButton = document.getElementById("pay-button")
+    const processing = document.getElementById("processing-payment")
 
     stripe = Stripe('pk_test_51HyS4gIXqaK8Y2qAvhIXEiF3auu4hmNfnyaa6DsaqtvIrokmGdmfa2y4rWgsJEKTz8j52JicFaDUkm0eHmf3WjXi00TDOeQRFM')
     function val() {
-    
+        let form = document.getElementById("charge_form");
+        if (form.checkValidity() == false) {
+            this.event.preventDefault();
+            this.event.stopPropagation();
+            form.classList.add("was-validated")
+            return;
+        }
+        form.classList.add("was-validated")
     }
 
     (function() {
