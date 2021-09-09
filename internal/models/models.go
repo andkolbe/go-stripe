@@ -62,7 +62,7 @@ type Transaction struct {
 	Currency            string `json:"currency"`
 	LastFour            string `json:"last_four"`
 	BankReturnCode      string `json:"bank_return_code"`
-	TransactionStatusId string `json:"transaction_status_id"`
+	TransactionStatusID string `json:"transaction_status_id"`
 }
 
 // the type for users
@@ -80,11 +80,51 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 
 	var widget Widget
 
-	row := m.DB.QueryRowContext(ctx, "SELECT id, name FROM widgets WHERE id = ?", id)
-	err := row.Scan(&widget.ID, &widget.Name)
+	row := m.DB.QueryRowContext(ctx, `
+		SELECT id, name, description, inventory_level, price, COALESCE(image, '')
+		FROM widgets 
+		WHERE id = ?
+		`, id)
+	err := row.Scan(
+		&widget.ID, 
+		&widget.Name,
+		&widget.Description,
+		&widget.InventoryLevel,
+		&widget.Price,
+		&widget.Image,
+	)
 	if err != nil {
 		return widget, err
 	}
 
 	return widget, nil
+}
+
+// inserts a new transaction and returns its id
+func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `
+		INSERT INTO transactions (amount, currency, last_four, bank_return_code, transaction_status_id)
+		VALUES (?, ?, ?, ?, ?)
+	`
+
+	result, err := m.DB.ExecContext(ctx, stmt, 
+		txn.Amount,
+		txn.Currency,
+		txn.LastFour,
+		txn.BankReturnCode,
+		txn.TransactionStatusID,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }
