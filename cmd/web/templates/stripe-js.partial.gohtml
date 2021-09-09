@@ -9,7 +9,7 @@
     const payButton = document.getElementById("pay-button")
     const processing = document.getElementById("processing-payment")
 
-    stripe = Stripe({{.API}})
+    stripe = Stripe({{.StripePublishableKey}})
 
     function hidePayButton() {
         // make sure the user can't click on the pay button twice
@@ -65,7 +65,7 @@
             body: JSON.stringify(payload),
         }
 
-        fetch("{{index .StringMap "publishable_key"}}", requestOptions)
+        fetch("{{.API}}/api/payment-intent", requestOptions)
             // convert the response to text so we know that the response is valid json
             .then(response => response.text())
             .then(response => {
