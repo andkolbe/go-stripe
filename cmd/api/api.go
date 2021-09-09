@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"myapp/internal/driver"
+	"myapp/internal/models"
 	"net/http"
 	"os"
 	"time"
@@ -27,20 +28,21 @@ type config struct {
 
 // receiver
 type application struct {
-	config        config
-	infoLog       *log.Logger
-	errorLog      *log.Logger
-	version       string
+	config   config
+	infoLog  *log.Logger
+	errorLog *log.Logger
+	version  string
+	DB       models.DBModel
 }
 
 func (app *application) serve() error {
-	srv := &http.Server {
-		Addr: fmt.Sprintf(":%d", app.config.port),
-		Handler: app.routes(),
-		IdleTimeout: 30 * time.Second,
-		ReadTimeout: 10 * time.Second,
+	srv := &http.Server{
+		Addr:              fmt.Sprintf(":%d", app.config.port),
+		Handler:           app.routes(),
+		IdleTimeout:       30 * time.Second,
+		ReadTimeout:       10 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
-		WriteTimeout: 5 * time.Second,
+		WriteTimeout:      5 * time.Second,
 	}
 
 	app.infoLog.Println(fmt.Sprintf("Starting Back end server in %s mode on port %d", app.config.env, app.config.port))
@@ -67,10 +69,11 @@ func main() {
 	defer conn.Close()
 
 	app := &application{
-		config: cfg,
-		infoLog: infoLog,
+		config:   cfg,
+		infoLog:  infoLog,
 		errorLog: errorLog,
-		version: version,
+		version:  version,
+		DB:       models.DBModel{DB: conn},
 	}
 
 	err = app.serve()
