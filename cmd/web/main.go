@@ -12,7 +12,7 @@ import (
 )
 
 const version = "1.0.0"
-const cssVersion = "1"
+// const cssVersion = "1"
 
 // holds configuration information for the app
 type config struct {
