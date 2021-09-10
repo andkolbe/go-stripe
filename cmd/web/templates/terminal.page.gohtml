@@ -8,7 +8,8 @@
 <h2>Virtual Terminal</h2>
 <hr>
 <div class="alert alert-danger text-center d-none" id="card-messages"></div>
-<form action="/payment-succeeded" method="POST"
+
+<form action="/virtual-terminal-payment-succeeded" method="POST"
     name="charge_form" id="charge_form"
     class="d-block needs-validation charge-form"
     autocomplete="off" novalidate>
@@ -59,9 +60,9 @@
 
 {{define "js"}}
 <script>
-document.getElementById("charge_amount", function(e) {
+document.getElementById("charge_amount").addEventListener("change", function(e) {
     if (e.target.value !== "") {
-        document.getElementById("amount").value = e.target.value * 100;
+        document.getElementById("amount").value = parseInt((e.target.value * 100), 10);
     } else {
         document.getElementById("amount").value = 0;
     }
