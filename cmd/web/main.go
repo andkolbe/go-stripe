@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"html/template"
@@ -60,6 +61,7 @@ func (app *application) serve() error {
 }
 
 func main() {
+	gob.Register(TransactionData{})
 	var cfg config // command line flag
 
 	flag.IntVar(&cfg.port, "port", 4000, "server port to listen on")
@@ -69,7 +71,7 @@ func main() {
 
 	flag.Parse()
 
-
+	
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile)
