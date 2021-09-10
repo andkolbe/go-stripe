@@ -271,3 +271,14 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Println(err)
 	}
 }
+
+func (app *application) BronzePlan(w http.ResponseWriter, r *http.Request) {
+	// we need to pass the handler the id of the plan
+	intMap := make(map[string]int)
+	intMap["plan_id"] = 1
+	if err := app.renderTemplate(w, r, "bronze-plan", &templateData{
+		IntMap: intMap,
+	}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
