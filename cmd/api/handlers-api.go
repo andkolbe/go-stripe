@@ -11,17 +11,21 @@ import (
 
 // the payload we are receiving from the front end
 type stripePayload struct {
-	Currency string `json:"currency"`
-	Amount string `json:"amount"`
+	Currency      string `json:"currency"`
+	Amount        string `json:"amount"`
+	PaymentMethod string `json:"payment_method"`
+	Email         string `json:"email"`
+	LastFour      string `json:"last_four"`
+	Plan          string `json:"plan"`
 }
 
 // the response we are sending back the front end
 // ,omitempty means if the field is blank, don't show it
 type jsonResponse struct {
-	OK bool `json:"ok"`
-	Message string 	`json:"message,omitempty"`
+	OK      bool   `json:"ok"`
+	Message string `json:"message,omitempty"`
 	Content string `json:"content,omitempty"`
-	ID int `json:"id,omitempty"`
+	ID      int    `json:"id,omitempty"`
 }
 
 func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request) {
@@ -41,9 +45,9 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	card := cards.Card {
-		Secret: app.config.stripe.secret,
-		Key: app.config.stripe.key,
+	card := cards.Card{
+		Secret:   app.config.stripe.secret,
+		Key:      app.config.stripe.key,
 		Currency: payload.Currency,
 	}
 
@@ -69,16 +73,15 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 		w.Write(out)
 	} else {
 		// if the charge failed
-		j := jsonResponse {
-			OK: false,
+		j := jsonResponse{
+			OK:      false,
 			Message: msg,
 			Content: "",
-
 		}
 		// convert the response to json and send it back
 		out, err := json.MarshalIndent(j, "", "   ")
 		if err != nil {
-		app.errorLog.Println(err)
+			app.errorLog.Println(err)
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(out)
@@ -96,6 +99,37 @@ func (app *application) GetWidgetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	out, err := json.MarshalIndent(widget, "", "   ")
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
+}
+
+func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, r *http.Request) {
+	// there is a json payload passed to this handler from the client
+	var data stripePayload
+	// get the values out of the request body and into the data variable
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	app.infoLog.Println(data.Email, data.LastFour, data.PaymentMethod, data.Plan)
+
+
+	okay := true
+	msg := ""
+
+	resp := jsonResponse {
+		OK: okay,
+		Message: msg,
+	}
+
+	out, err := json.MarshalIndent(resp, "", "  ")
 	if err != nil {
 		app.errorLog.Println(err)
 		return
