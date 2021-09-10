@@ -30,7 +30,7 @@ type Widget struct {
 	Description    string `json:"description"`
 	InventoryLevel int    `json:"inventory_level"`
 	Price          int    `json:"price"`
-	Image          string    `json:"image"`
+	Image          string `json:"image"`
 }
 
 // the type for all orders
@@ -38,6 +38,7 @@ type Order struct {
 	ID            int `json:"id"`
 	WidgetID      int `json:"widget_id"`
 	TransactionID int `json:"transaction_id"`
+	CustomerID    int `json:"customer_id"`
 	StatusID      int `json:"status_id"`
 	Quantity      int `json:"quantity"`
 	Amount        int `json:"amount"`
@@ -74,6 +75,14 @@ type User struct {
 	Password  string `json:"password"`
 }
 
+// the type for customers
+type Customer struct {
+	ID        int    `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+}
+
 func (m *DBModel) GetWidget(id int) (Widget, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -86,7 +95,7 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 		WHERE id = ?
 		`, id)
 	err := row.Scan(
-		&widget.ID, 
+		&widget.ID,
 		&widget.Name,
 		&widget.Description,
 		&widget.InventoryLevel,
@@ -110,7 +119,7 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 		VALUES (?, ?, ?, ?, ?)
 	`
 
-	result, err := m.DB.ExecContext(ctx, stmt, 
+	result, err := m.DB.ExecContext(ctx, stmt,
 		txn.Amount,
 		txn.Currency,
 		txn.LastFour,
@@ -139,7 +148,7 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 		VALUES (?, ?, ?, ?, ?)
 	`
 
-	result, err := m.DB.ExecContext(ctx, stmt, 
+	result, err := m.DB.ExecContext(ctx, stmt,
 		order.WidgetID,
 		order.TransactionID,
 		order.StatusID,
