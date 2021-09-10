@@ -10,11 +10,14 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 const version = "1.0.0"
 
 // const cssVersion = "1"
+var session *scs.SessionManager
 
 // holds configuration information for the app
 type config struct {
@@ -38,6 +41,7 @@ type application struct {
 	templateCache map[string]*template.Template
 	version       string
 	DB            models.DBModel
+	Session       *scs.SessionManager
 }
 
 func (app *application) serve() error {
@@ -65,8 +69,6 @@ func main() {
 
 	flag.Parse()
 
-
-
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile)
 
@@ -75,6 +77,10 @@ func main() {
 		errorLog.Fatal(err)
 	}
 	defer conn.Close()
+
+	// set up session
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
 
 	tc := make(map[string]*template.Template)
 
@@ -85,6 +91,7 @@ func main() {
 		templateCache: tc,
 		version:       version,
 		DB:            models.DBModel{DB: conn},
+		Session: session,
 	}
 
 	err = app.serve()
