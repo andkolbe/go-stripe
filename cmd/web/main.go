@@ -71,7 +71,8 @@ func main() {
 
 	flag.Parse()
 
-
+	
+	
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime|log.Lshortfile)
