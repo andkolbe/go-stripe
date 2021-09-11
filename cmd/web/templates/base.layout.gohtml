@@ -27,9 +27,6 @@
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/virtual-terminal">Virtual Terminal</a>
-            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Products
@@ -39,9 +36,12 @@
                 <li><a class="dropdown-item" href="/plans/bronze">Subscription</a></li>
               </ul>
             </li>
+            <li id="vt-link" class="nav-item d-none">
+              <a class="nav-link" href="/virtual-terminal">Virtual Terminal</a>
+            </li>
           </ul>
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+            <li id="login-link" class="nav-item d-none"><a class="nav-link" href="/login">Login</a></li>
           </ul>
         </div>
       </div>
@@ -62,6 +62,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 
+    <script>
+    let loginLink = document.getElementById("login-link")
+    let vtLink = document.getElementById("vt-link")
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // if the user is logged in
+      if (localStorage.getItem("token") !== null ) {
+        loginLink.innerHTML = '<li id="login-link" class="nav-item"><a class="nav-link" onclick="logout()" href="#!">Logout</a></li>'
+        vtLink.classList.remove("d-none")
+      } else {
+        loginLink.innerHTML = '<li id="login-link" class="nav-item"><a class="nav-link" href="/login">Login</a></li>'
+      }
+      loginLink.classList.remove("d-none")
+    })
+
+    function logout() {
+      localStorage.removeItem("token")
+      localStorage.removeItem("token_expiry")
+      location.href = "/login"
+    }
+    </script>
     {{block "js" .}}
     {{end}}
     
