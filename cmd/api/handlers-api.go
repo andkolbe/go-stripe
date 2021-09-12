@@ -313,3 +313,28 @@ func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) 
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
 }
+
+func (app *application) AuthenticateToken(r *http.Request) (*models.User, error) {
+	var u models.User 
+
+	return &u, nil
+}
+
+func (app *application) CheckAuthentication(w http.ResponseWriter, r *http.Request) {
+	// validate the token and get associated user
+	user, err := app.AuthenticateToken(r)
+	if err != nil {
+		app.invalidCredentials(w)
+		return
+	}
+
+	// valid user
+	var payload struct {
+		Error bool `json:"error"`
+		Message string `json:"message"` 
+	}
+	payload.Error = false
+	payload.Message = fmt.Sprintf("authenticated user %s", user.Email)
+	// send the information back
+	app.writeJSON(w, http.StatusOK, payload)
+}
