@@ -257,11 +257,13 @@ func (app *application) SaveOrder(order models.Order) (int, error) {
 }
 
 func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) {
+	// get the user input
 	var userInput struct {
 		Email string `json:"email"`
 		Password string `json:"password"`
 	}
 
+	// read the JSON from that input
 	err := app.readJSON(w, r, &userInput)
 	if err != nil {
 		app.badRequest(w, r, err)
