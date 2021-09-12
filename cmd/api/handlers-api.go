@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"myapp/internal/cards"
 	"myapp/internal/models"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -316,6 +318,24 @@ func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) 
 
 func (app *application) AuthenticateToken(r *http.Request) (*models.User, error) {
 	var u models.User 
+
+	// check if the request has an Authorization header
+	authorizationHeader := r.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		return nil, errors.New("no authorization header received")
+	}
+	// check if the Authorization header has a bearer token attached
+	headerParts := strings.Split(authorizationHeader, " ")
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return nil, errors.New("no authorization header received")
+	}
+	// check if the token is in the correct format
+	token := headerParts[1]
+	if len(token) != 26 {
+		return nil, errors.New("authentication token is wrong size")
+	}
+
+	// get the user from the tokens table
 
 	return &u, nil
 }
