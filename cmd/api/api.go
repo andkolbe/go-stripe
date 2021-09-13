@@ -24,6 +24,12 @@ type config struct {
 		secret string
 		key    string
 	}
+	smtp struct {
+		host string
+		port int
+		username string
+		password string
+	}
 }
 
 // receiver
@@ -56,6 +62,8 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4001, "server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production|maintenance}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "widgets:widgets@tcp(localhost:3306)/widgets?parseTime=true&tls=false", "DSN")
+	
+
 
 	flag.Parse()
 

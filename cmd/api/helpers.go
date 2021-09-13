@@ -100,3 +100,5 @@ func (app *application) passwordMatches(hash, password string) (bool, error) {
 
 	return true, nil
 }
+
+
