@@ -29,6 +29,8 @@ func (app *application) routes() http.Handler {
 
 	// auth routes
 	mux.Get("/login", app.LoginPage)
+	mux.Post("/login", app.PostLoginPage)
+	mux.Get("/logout", app.Logout)
 
 	// serve static content
 	fileServer := http.FileServer(http.Dir("./static"))
