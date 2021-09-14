@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"myapp/internal/cards"
+	"myapp/internal/encryption"
 	"myapp/internal/models"
 	"myapp/internal/urlsigner"
 	"net/http"
@@ -501,7 +502,18 @@ func (app *application) ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := app.DB.GetUserByEmail(payload.Email)
+	// decrypt email
+	encryptor := encryption.Encryption {
+		Key: []byte(app.config.secretkey),
+	}
+
+	realEmail, err := encryptor.Decrypt(payload.Email)
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	user, err := app.DB.GetUserByEmail(realEmail)
 	if err != nil {
 		app.badRequest(w, r, err)
 		return

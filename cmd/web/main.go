@@ -73,7 +73,7 @@ func main() {
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "widgets:widgets@tcp(localhost:3306)/widgets?parseTime=true&tls=false", "DSN")
 	flag.StringVar(&cfg.api, "api", "http://localhost:4001", "URL to api")
-	flag.StringVar(&cfg.secretkey, "secret", "gePs333hdBfgsd736cf", "secret key")
+	flag.StringVar(&cfg.secretkey, "secret", "gePs333hdBfgsD736cf48jkpZ231v7uA", "secret key") // key must be 32 characters long
 	flag.StringVar(&cfg.frontend, "frontend", "http://localhost:4000", "url to front end")
 
 	flag.Parse()
