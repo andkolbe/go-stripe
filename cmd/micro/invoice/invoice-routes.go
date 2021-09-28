@@ -18,7 +18,7 @@ func (app *application) routes() http.Handler {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	  }))
 
-	mux.Get("/invoice/create-and-send", app.CreateAndSendInvoice)
+	mux.Post("/invoice/create-and-send", app.CreateAndSendInvoice)
 
 	return mux
 }
