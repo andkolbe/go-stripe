@@ -51,6 +51,9 @@ func main() {
 		version:  version,
 	}
 
+	// automatically create an invoices folder if it already does not exist
+	app.CreateDirIfNotExist("./invoices")
+
 	err := app.serve()
 	if err != nil {
 		log.Fatal(err)
